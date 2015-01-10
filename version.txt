@@ -1,0 +1,2 @@
+Java version: 	1.5.0_06
+Host platform: 	Microsoft Windows XP Pro (Service Pack 2)

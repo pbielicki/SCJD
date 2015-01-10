@@ -1,0 +1,665 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>Contractors Help</title>
+</head>
+<body style="font-family: Arial; font-size: 10pt; text-align: justify;">
+
+<a name="top"></a><h1><i>Contractors</i> User's Guide</h1>
+
+<h2>Introduction &amp; Index</h2>
+This short document is an User's Guide to the <b><i>Contractors</i></b> application. This 
+document describes how to install, start and use this application as well as
+how to properly configure each application mode. Currently <b><i>Contractors</i></b>
+application supports following modes:
+<ul>
+<li><b>Standalone</b> (<i>alone</i>) - application can work locally in this mode
+which means that no networking is needed and all data are stored in local disk.</li>
+<li><b>Network</b> (<i>network</i>) - in this mode application connects to the server
+specified in configuration in order to retrieve required data. <i>NOTE:</i>
+RMI server must be started prior to the application.</li>
+<li><b>Server</b> (<i>server</i>) - in this mode simple GUI with buttons for server
+management (<i>Start</i>, <i>Stop</i>) starts.</li>
+</ul>
+
+This document is divided into the following sections:
+<ol>
+<li>
+<b><a href="#install">Installation &amp; Running the Application</a></b> - this
+section describes installation and running application.
+</li>
+<li>
+<b><a href="#navigation">Navigation</a></b> - this section describes how to 
+use the application. It is divided into the following subsections:
+	<ul>
+	<li>
+		<a href="#alone">Standalone &amp; Network Modes:</a>
+		<ul>
+		<li><a href="#menus">Menus</a></li>
+		<li><a href="#add">Adding New Contractors</a></li>
+		<li><a href="#edit">Editing Contractors</a></li>
+		<li><a href="#delete">Deleting Contractors</a></li>
+		<li><a href="#search">Searching for Contractors</a></li>
+		<li><a href="#book">Booking/Freeing Contractors</a></li>
+		<li><a href="#exit">Exiting Application</a></li>
+		</ul>
+	</li>
+	<li>
+		<a href="#server">Server Mode:</a>
+		<ul>
+		<li><a href="#menus_server">Menus</a></li>
+		<li><a href="#service">Starting/Stopping RMI Service</a></li>
+		<li><a href="#exit_server">Exiting Application</a></li>
+		</ul>
+	</li>
+	</ul>
+</li>
+<li>
+<b><a href="#config">Configuration</a></b> - this section describes how to 
+configure each application mode, i.e.:
+	<ul>
+	<li><a href="#config_alone">Standalone Mode</a></li>
+	<li><a href="#config_network">Network Mode</a></li>
+	<li><a href="#config_server">Server Mode</a></li>
+	</ul>
+</li>
+<li>
+<b><a href="#trouble">Troubleshooting</a></b> - this section describes common
+problems user can encounter during using <b><i>Contractors</i></b> application and answers
+how to deal with those problems:
+	<ul>
+	<li><a href="#could_not_edit">Could not edit selected contractor</a></li>
+	<li><a href="#could_not_store">Could not store contractor's data into database</a></li>
+	<li><a href="#could_not_store_changed">Could not store changed contractor's data into database</a></li>
+	<li><a href="#filling">Application requires filling different fields</a></li>
+	<li><a href="#could_not_start_alone">Could not start application in <i>standalone</i> mode</a></li>
+	<li><a href="#could_not_start_network">Could not start application in <i>network</i> mode</a></li>
+	<li><a href="#could_not_start_rmi">Could not start RMI service</a></li>
+	<li><a href="#could_not_store_conf">Could not store application's configuration</a></li>
+	</ul>
+</li>
+</ol>
+
+<a href="#top"><i>Return to top</i></a>
+<hr>
+<a name="install"></a><h2>Installation &amp; Running the Application</h2>
+
+In order to start <b><i>Contractors</i></b> application you have to follow these steps:
+<ol>
+<li>Create directory where the application will be working (e.g. <code>C:\Contractors</code>).</li>
+<li>Create <code>docs/</code> subdirectory in the previously created directory (e.g 
+	<code>C:\Contractors\docs</code>).</li>
+<li>Copy following files into previously created directory (<code>C:\Contractors</code>
+	in this case):
+	<ul>
+	<li><code>runme.jar</code> - compiled application archive,</li>
+	<li><code>db-2x1.db</code> - Contractors' database,</li>
+	<li><code>suncertify.properties</code> - application's configuration,</li>
+	</ul>
+</li>
+<li>Copy the following files into previously created <code>docs</code> directory:
+	<ul>
+	<li><code>userguide.html</code> - this user's guide HTML file,</li>
+	<li><code>img/</code> - <i>copy this directory with all subdirectories</i> 
+		- this directory contains images for User's Guide.</li>
+	</ul>
+<br>
+
+<b>Now application is ready to run.</b>
+<br><br>
+</li>
+
+<li>Start RMI registry (it is located in your JRE <code>\bin</code> directory - 
+<code>rmiregistry.exe</code> file). You are not obliged to start RMI registry - 
+<b><i>Contractors</i></b> application will start it automatically in <i>Server Mode.</i></li>
+<li>Start <b><i>Contractors</i></b> application in specified mode typing following command:
+<br><br>
+<code>java -jar runme.jar [&lt;mode&gt;]</code>
+<br><br>
+If you don't specify application's mode it will automatically start in the <i>Network Mode</i>.
+</li>
+</ol>
+
+<b><i>Contractors</i></b> application should start up without any problems - if not please investigate 
+the <a href="#trouble">Troubleshooting</a> section of this guide.
+<br><br>
+
+For more information concerning running RMI applications please refer to RMI tutorial:
+<a href="http://java.sun.com/docs/books/tutorial/rmi/">http://java.sun.com/docs/books/tutorial/rmi/</a>
+(especially <i>Compiling and Running the Example</i> section).
+
+<br><br>
+<a href="#top"><i>Return to top</i></a>
+<hr>
+<a name="navigation"></a><h2>Navigation</h2>
+
+Navigation of <b><i>Contractors</i></b> application was designed to be intuitive and straightforward. While
+using it you may encounter two different main windows: Standalone/Network and Server. These two
+types are described in details in the following subsections.
+
+<a name="alone"></a><h3>Standalone &amp; Network Modes</h3>
+
+Main window in the Standalone and Network modes looks like this:
+<br><br>
+<center><img src="img/main.png" alt="Main Window"></center>
+<br>
+It is divided into four main parts (from top left to bottom right):
+<ul>
+<li><b>Menu</b> - consists of all possible options that application enables in the current mode - see 
+<b>Menus and Buttons</b> subsection for details;</li>
+<li><b>Filter tree</b> - you can quickly search for required data by selecting appropriate tree leaf;</li>
+<li><b>Data table</b> - contractors' data from database are displayed in this widget (regarding applied filter).
+This table allows user to sort data against required column - just press column header to sort data
+against it - if you press again data will sort in the opposite direction;</li>
+<li><b>Buttons</b> - buttons that allow user to manipulate contractors' data.</li>
+</ul>
+
+Sorting tree is a kind of "quick-search" for name and location fields. For example,
+if you want to display only those contractors who are located in <i>Digitopolis</i> just expand 
+LOCATION node and select <i>Digitopolis</i> leaf:
+<br><br>
+<center><img src="img/filter_tree.png" alt="Example of Filter Tree"></center>
+<br>
+
+If you want to display only those contractors who are named <i>Moore Power Tool Ya</i> and located in 
+<i>Atlantis</i> just expand NAME and LOCATION nodes and select <i>Moore Power Tool Ya</i> leaf,
+press <i>Ctrl</i> key and then select <i>Atlantis</i> leaf:
+
+<br><br>
+<center><img src="img/filter_tree_ctrl.png" alt="Example of Filter Tree"></center>
+<br>
+
+Filter tree is automatically updated after each database operation committed by the user.
+
+<a name="menus"></a><h4>Menus</h4>
+
+<b>File:</b>
+<ul>
+<li>Exit - exits the application and ends current session.</li>
+</ul>
+
+<b>Configuration:</b>
+<ul>
+<li>Standalone Mode - opens standalone mode configuration dialog.</li>
+<li>Network Mode - opens network mode configuration dialog.</li>
+</ul>
+
+<b>Contractor:</b>
+<ul>
+<li>Add New Contractor - opens dialog that allows user to add new contractor into the database.</li>
+<li>Edit Selected Contractor - opens dialog that allows user to modify data of selected contractor
+in the database.</li>
+<li>Delete Selected Contractor - allows user to delete selected contractor from the database.</li>
+<li>Book Selected Contractor - opens dialog that allows user to book selected contractor for
+any owner.</li>
+<li>Free Selected Contractor - allows user to free selected contractor i.e. make it available
+for booking.</li>
+</ul>
+
+<b>Search:</b>
+<ul>
+<li>Search Contractors - opens dialog that allows user to specify filter </li>
+<li>Show All Contractors (Resets Filter)</li>
+</ul>
+
+<b>Help:</b>
+<ul>
+<li>Help Contents - displays this help.</li>
+</ul>
+
+<a name="add"></a><h4>Adding New Contractors</h4>
+
+If you want to add new contractor to the database press <i>Add</i> button in the
+main window or select <i>Add New Contractor</i> from <i>Contractor</i> menu or press
+<i>Shift + Insert</i> key combination. Dialog window for adding new contractor
+will appear at once - see image below:
+<br><br>
+<center><img src="img/contractor_add.png" alt="Contractor's Dialog (Add)"></center>
+<br>
+
+You can enter new contractor's data via this window and add it to the database
+by pressing <i>OK</i> button. If you encounter any problem please refer to
+<b><a href="#trouble">Troubleshooting</a></b> section in this document. If you don't
+know what each field in this dialog window means, here is a short description:
+<ul>
+<li><b>Name</b> - The name of the subcontractor this record relates to.</li>
+<li><b>Location</b> - The locality in which this contractor works.</li>
+<li><b>Specialties</b> - List of types of work this contractor can perform.</li>
+<li><b>Size</b> - Number of staff in organization size.</li>
+<li><b>Rate per hour</b> - Charge per hour for the subcontractor.</li>
+<li><b>Availability</b> - Indicate if edited contractor is available for booking 
+or booked for any customer. If you choose <i>Booked for</i> option you must provide
+the id value of the customer who has booked this contractor.</li>
+</ul>
+
+If you want to change specialties list press <i>Change</i> button below 
+<i>Specialties</i> label - dialog window to change specialties list will appear
+at once:
+<br><br>
+<center><img src="img/specialties.png" alt="Contractor's Specialties Dialog"></center>
+<br>
+
+If you want to add new specialty select one you want and press <i>Add</i> button.
+If you cannot find specialty you want to add in the list just type its name by
+yourself and press <i>Add</i> button. If you exceed maximum number of specialties
+information dialog with relevant message will appear:
+<br><br>
+<center><img src="img/errors/specialties_list_too_long.png" alt="Specialties list is too long"></center>
+<br>
+If you want to delete specialty from the list just select it in the list (not in
+the combo box) and press <i>Delete</i> button.
+<br><br>
+When you finish selecting specialties press <i>OK</i> button in order to get back
+to contractor's dialog window.
+
+<a name="edit"></a><h4>Editing Contractors</h4>
+
+If you want to edit contractor's data select one you are interested in and press
+<i>Edit</i> button in the main window or select <i>Edit Selected Contractor</i>
+from <i>Contractor</i> menu. Dialog window for editing contractor's data will
+appear immediately - see image below:
+<br><br>
+<center><img src="img/contractor_edit.png" alt="Contractor's Dialog (Edit)"></center>
+<br>
+Navigation is the same as with adding new contractor. In case of any problem please
+refer to <b><a href="#trouble">Troubleshooting</a></b> section in this document. 
+
+<a name="delete"></a><h4>Deleting Contractors</h4>
+
+If you want to delete contractor select one you are interested in and press
+<i>Delete</i> button in the main window or select <i>Delete Selected Contractor</i>
+from <i>Contractor</i> menu or press <i>Shift + Delete</i> key combination. System
+will ask you to confirm deletion and confirmation dialog will appear on the screen:
+<br><br>
+<center><img src="img/options/delete_contractor.png" alt="Contractor Deletion Question"></center>
+<br>
+In case of any problem please refer to <b><a href="#trouble">Troubleshooting</a></b> 
+section in this document. 
+
+<a name="book"></a><h4>Booking/Freeing Contractors</h4>
+
+If you want to book contractor for concrete customer you can do this in two
+different ways. One way is to select <i>Booked for</i> option and type ID of 
+customer that books contractor while editing contractor's data (see <a href="#edit">Editing 
+Contractors</a>). Second way is to press <i>Book</i> button in the main window or 
+select <i>Book Selected Contractor</i> from <i>Contractor</i> menu. Dialog window for
+booking contractor will appear immediately:
+<br><br>
+<center><img src="img/contractor_book.png" alt="Contractor's Booking Dialog"></center>
+<br>
+
+In this window the only thing you can do is typing ID of customer that books selected
+contractor. If you press <i>OK</i> button current contractor will be booked for
+given owner.
+<br><br>
+If you want to free contractor you can do this in two different ways. One way is to
+select <i>Available</i> option while editing contractor's data (see <a href="#edit">Editing 
+Contractors</a>). Second way is to press <i>Free</i> button in the main window or 
+select <i>Free Selected Contractor</i> from <i>Contractor</i> menu. If selected contractor
+is booked confirmation dialog will appear:
+<br><br>
+<center><img src="img/options/free_contractor.png" alt="Contractor's Filter Dialog"></center>
+<br>
+
+If you press <i>Yes</i> selected contractor will be available for booking. If selected
+contractor is already available for booking you will see following information:
+<br><br>
+<center><img src="img/errors/contractor_available.png" alt="Contractor's Filter Dialog"></center>
+<br>
+
+<a name="search"></a><h4>Searching for Contractors</h4>
+
+In order to display only those contractors that match your criteria press <i>Search</i>
+button in the main window or select <i>Search Contractors</i> from <i>Search</i> 
+menu or press <i>Ctrl + F</i> key combination. Dialog window for typing desired
+criteria will appear at once - see image below:
+<br><br>
+<center><img src="img/contractor_filter.png" alt="Contractor's Filter Dialog"></center>
+<br>
+If you want for example to display all contractors whose name starts with <i>Company</i>
+you have to type <i>Company</i> text in the <i>Name</i> text widget and press <i>Search</i> button.
+
+If you want to display all contractors whose name starts with <i>Company</i>
+<b>AND</b> rate per hour less or equal than 25 you have to type <i>Company</i> text
+in the <i>Name</i> text widget, select <code>&lt;=</code> from <i>Rate per hour</i> combo box,
+type 25 in the <i>Rate per hour</i> spinner widget and press <i>Search</i> button.
+<br><br>
+
+If you want to search for contractors whose name and/or location matches exactly
+your selection you have to select required name or location in the filter tree in
+the main window. If you for example want to search for contractors whose name is
+<i>Dogs With Tools</i> you have to select <i>Dogs With Tools</i> in the filter tree
+in the main window and press <i>Search</i> button in the main window or select
+<i>Search Contractors</i> from the <i>Search</i> menu. Dialog window for typing desired
+criteria will appear at once:
+<br><br>
+<center><img src="img/contractor_filter_exact.png" alt="Contractor's Filter Dialog"></center>
+<br>
+
+You can then specify additional search criteria just like with ordinary searching
+except for that you cannot modify EXACT MATCH fields (name in this case).
+
+<br><br>
+As you can see you can define comparison operator on number values you are interested
+in. Operator is selectable from combo box and the meaning of each operator is:
+<ul>
+<li><b>&nbsp;&gt;</b> &nbsp;&nbsp;&nbsp;&nbsp;- greater than X;</li>
+<li><b>&gt;=</b> &nbsp;&nbsp;- greater than or equal to X;</li>
+<li><b>&nbsp;=</b> &nbsp;&nbsp;&nbsp;&nbsp;- equal to X;</li>
+<li><b>&lt;=</b> &nbsp;&nbsp;- less that or equal to X;</li>
+<li><b>&nbsp;&lt;</b> &nbsp;&nbsp;&nbsp;&nbsp;- less than X</li>
+</ul>
+where X is a number user types in the spinner widget.
+<br><br>
+If you want to display all contractors that specializes in concrete jobs (specialties)
+- e.g. <i>Carpets</i> - you have to press <i>Change</i> button - dialog window
+with specialties will appear immediately (see image below). 
+<br><br>
+<center><img src="img/specialties.png" alt="Specialties Filter"></center>
+<br>
+This is the same window as with adding and editing contractor's data.
+
+<a name="exit"></a><h4>Exiting Application</h4>
+
+If you want to close the application you have to perform one of the following actions:
+<ul>
+<li>press <i>Exit</i> button in the main window;</li>
+<li>select <i>Exit</i> option from <i>File</i> menu;</li>
+<li>press <code>X</code> button in the upper-right corner of the main window;</li>
+<li>press <i>Alt + F4</i> key combination.</li>
+</ul>
+If you perform one of these operations the confirmation dialog will appear at once
+(see image below) and ask you if you really want to exit the application.
+<br><br>
+<center><img src="img/options/application_exit.png" alt="Application Exit Question"></center>
+<br>
+Application will close immediately if you choose <i>Yes</i> option and will return
+to the main window if you choose <i>No</i> option.
+
+<a name="server"></a><h3>Server Mode</h3>
+
+Main window in <i>Server</i> mode looks completely different than in <i>Standalone</i>
+and <i>Network</i> modes:
+<br><br>
+<center><img src="img/server.png" alt="Server Window"></center>
+<br>
+
+<a name="menus_server"></a><h4>Menus</h4>
+
+All menus are almost the same as in <i>Standalone</i> and <i>Network</i> modes
+(see <a href="#menus">Menus in Standalone and Network modes</a>) except for:
+<br><br>
+
+<b>Configuration:</b>
+<ul>
+<li>Server Mode - opens server mode configuration dialog.</li>
+</ul>
+
+<b>Server:</b>
+<ul>
+<li>Start Server - starts contractors RMI service.</li>
+<li>Stop Server - stops contractors RMI service.</li>
+</ul>
+
+<a name="service"></a><h4>Starting/Stopping RMI Service</h4>
+
+If you want to start contractors RMI service simply press <i>Start</i> button in
+the main window or select <i>Start Server</i> from <i>Server</i> menu. The RMI service
+will start, <i>Start</i> button will become disabled, <i>Stop</i> button will become
+enabled and the label above buttons will change and will be providing information
+about started service (local database file; IP address or hostname on which service
+is running; service name that is stored in RMI registry):
+<br><br>
+<center><img src="img/server_running.png" alt="Server Window (Service is Running)"></center>
+<br>
+If you encounter any problems (e.g. service doesn't start) please refer to 
+<a href="#trouble">Troubleshooting</a> section in this document.
+
+If you want to stop contractors RMI service simply press <i>Stop</i> button in
+the main window or select <i>Stop Server</i> from <i>Server</i> menu. The RMI service
+will stop, <i>Stop</i> button will become disabled, <i>Start</i> button will become
+enabled and the label above buttons will change to <b>RMI service is stopped.</b>
+
+<a name="exit_server"></a><h4>Exiting Application</h4>
+
+See <a href="#exit">Exiting Standalone &amp; Network Application</a>.
+
+<br><br>
+<a href="#top"><i>Return to top</i></a>
+<hr>
+<a name="config"></a><h2>Configuration</h2>
+
+Although each application mode is configured in different dialog window, they are
+very similar and very easy to use. Each single configuration dialog is available 
+from <i>Configuration</i> menu only from application running in concrete mode. 
+It means that if you are running <b><i>Contractors</i></b> application in <i>standalone</i>
+mode you can only change configuration for this mode (configuration for <i>network</i>
+and <i>server</i> modes are unavailable).
+<br><br>
+
+<i><b>IMPORTANT:</b></i> Please note that all changes in configuration will take effect
+only after you restart application. It means that if you change for example database
+file in <i>standalone</i> mode and commit these changes you will have to close the
+application and start it again in order to operate on changed database file. If
+you do not restart application after committing changes it will be using previous
+settings.
+
+<a name="config_alone"></a><h3>Standalone Mode</h3>
+
+You can change configuration for this mode only when you are running <b><i>Contractors</i></b>
+application in <i>standalone</i> mode. You can open configuration dialog by selecting
+<i>Standalone Mode</i> from <i>Configuration</i> menu. When you do this configuration
+dialog for <i>standalone</i> mode will appear immediately:
+<br><br>
+<center><img src="img/configuration/standalone.png" alt="Standalone Configuration"></center>
+<br>
+
+In this mode you can only change database file on which application operates. You
+can change path to database file by pressing <i>Change</i> button. When you do this
+database file choosing dialog will open:
+<br><br>
+<center><img src="img/configuration/select_file.png" alt="Selecting Database File"></center>
+<br>
+
+In this window you can choose path to the database file and when you are ready
+simply press <i>Select</i>. New path will be set in configuration dialog - if you
+want to commit this operation and change configuration press <i>OK</i> button.
+<br><br>
+
+<i>NOTE:</i> file filter in file choosing dialog is set to <code>*.db</code> by
+default. If you want to choose file with any other extension choose <i>All files</i>
+from <i>Files of Type</i> combo box.
+<br><br>
+If you encounter any problems please refer to <a href="#trouble">Troubleshooting</a> 
+section in this document.
+
+<a name="config_network"></a><h3>Network Mode</h3>
+
+You can change configuration for this mode only when you are running <b><i>Contractors</i></b>
+application in <i>network</i> mode. You can open configuration dialog by selecting
+<i>Network Mode</i> from <i>Configuration</i> menu. When you do this configuration
+dialog for <i>network</i> mode will appear immediately:
+<br><br>
+<center><img src="img/configuration/network.png" alt="Network Configuration"></center>
+<br>
+In this mode you can change RMI service host and port and RMI service name where
+service host and port are the host and port on which RMI registry waits for
+client's requests (contractors service is accessible through this registry).
+<br><br>
+
+You can change RMI service host and port by typing it directly into <i>Service Host</i>
+text field. Please note that host can be hostname like <code>suncertify.sun.com</code>
+or IP address line <code>217.128.81.23</code>. If you want to specify the port 
+manually just add colon (<code>:</code>) and type port afterwards e.g. 
+<code>suncertify.sun.com:911</code> (by default, the registry runs on port <code>1099</code>
+so if you do not specify the port manually this port will be used to connect
+RMI registry).
+<br><br>
+
+You can change RMI service name by typing its name directly into <i>Service Name</i>
+text field. RMI service name is the name with which contractors service (providing
+contractors data) was registered in the RMI registry.
+<br><br>
+
+If you want to commit operation and change configuration for this mode press
+<i>OK</i> button or <i>Cancel</i> otherwise (if you want to discard changes).
+<br><br>
+
+If you encounter any problems please refer to <a href="#trouble">Troubleshooting</a> 
+section in this document.
+<br><br>
+
+For more information concerning running RMI applications please refer to RMI tutorial:
+<a href="http://java.sun.com/docs/books/tutorial/rmi/">http://java.sun.com/docs/books/tutorial/rmi/</a>
+(especially <i>Compiling and Running the Example</i> section).
+
+<a name="config_server"></a><h3>Server Mode</h3>
+
+You can change configuration for this mode only when you are running <b><i>Contractors</i></b>
+application in <i>server</i> mode. You can open configuration dialog by selecting
+<i>Server Mode</i> from <i>Configuration</i> menu. When you do this configuration
+dialog for <i>network</i> mode will appear immediately:
+<br><br>
+<center><img src="img/configuration/server.png" alt="Server Configuration"></center>
+<br>
+In this mode you can change database file on which users will be operating RMI 
+service host and port and RMI service name where service host and port are the 
+host and port on which RMI registry waits for client's requests (contractors service
+is accessible through this registry). 
+<br><br>
+
+You can change path to database file by pressing <i>Change</i> button. When you do this
+database file choosing dialog will open - see <a href="#config_alone"><i>standalone</i> mode
+configuration</a>.
+<br><br>
+
+You can change RMI service host and port by typing it directly into <i>Service Host</i>
+text field. Please note that host can be hostname like <code>suncertify.sun.com</code>
+or IP address line <code>217.128.81.23</code>. If you want to specify the port 
+manually just add colon (<code>:</code>) and type port afterwards e.g. 
+<code>suncertify.sun.com:911</code> (by default, the registry runs on port <code>1099</code>
+so if you do not specify the port manually this port will be used to connect
+RMI registry).
+<br><br>
+
+You can change RMI service name by typing its name directly into <i>Service Name</i>
+text field. RMI service name is the name with which contractors service (providing
+contractors data) was registered in the RMI registry.
+<br><br>
+
+If you want to commit operation and change configuration for this mode press
+<i>OK</i> button or <i>Cancel</i> otherwise (if you want to discard changes).
+<br><br>
+
+If you encounter any problems please refer to <a href="#trouble">Troubleshooting</a> 
+section in this document.
+<br><br>
+
+For more information concerning running RMI applications please refer to RMI tutorial:
+<a href="http://java.sun.com/docs/books/tutorial/rmi/">http://java.sun.com/docs/books/tutorial/rmi/</a>
+(especially <i>Compiling and Running the Example</i> section).
+
+<br><br>
+<a href="#top"><i>Return to top</i></a>
+<hr>
+<a name="trouble"></a><h2>Troubleshooting</h2>
+
+You can encounter a number of different issues while using <i><b>Contractors</b></i>
+application. This section tries to catalogue and present the most common problems.
+
+<a name="could_not_edit"></a><h4>Could not edit selected contractor:</h4>
+
+If you see such error dialog:
+<br><br>
+<center><img src="img/errors/dialog_init.png" alt="Contractor's Dialog Initialization Error"></center>
+<br>
+it means that contractor's record you want to edit no longer exists in database.
+This situation may occur when two different users tries to operate on the same
+contractor's record - one of them removes record from database and the second one
+tries to edit its data. Application always checks if record that user wants to edit
+exists in database before it opens the window to edit this record.
+
+<a name="could_not_store"></a><h4>Could not store contractor's data into database:</h4>
+
+If you see such warning dialog:
+<br><br>
+<center><img src="img/errors/duplicate.png" alt="Duplicate Object Error"></center>
+<br>
+it means that you are trying to add to database (or edit existing one) contractor 
+with data that are already there. Please remember that there could not exist two 
+different contractors with the same name and location in the database (this is a
+<i>PRIMARY KEY</i> of contractor: <i><b>name</b></i>, <i><b>location</b></i>). Please 
+change the data you want to store in the database (either contractor's name or location)
+and press <i>OK</i> in contractor's edit/add window or <i>Cancel</i> if you want to resign
+from it.
+
+<a name="could_not_store_changed"></a><h4>Could not store changed contractor's data into database:</h4>
+
+If you see such error dialog:
+<br><br>
+<center><img src="img/errors/stale.png" alt="Stale Object Error"></center>
+<br>
+it means that while user was modifying contractor's data other user removed it from
+database, thus it cannot be updated.
+
+<a name="filling"></a><h4>Application requires filling different fields:</h4>
+
+If you see such information dialog:
+<br><br>
+<center><img src="img/errors/fill_dialog_field.png" alt="Enter Datum into the Required Dialog Field"></center>
+<br>
+it means that you want to store/commit data but didn't fill in all necessary 
+fields in current dialog. As far as contractor's dialog is concerned you have to
+fill in (filling in means enter at least one character) the following fields:
+<ul>
+<li>name,</li>
+<li>location,</li>
+<li>specialties.</li>
+</ul>
+
+<a name="could_not_start_alone"></a><h4>Could not start application in <i>standalone</i> mode:</h4>
+
+If you see such error dialog:
+<br><br>
+<center><img src="img/errors/standalone_init.png" alt="Standalone Mode Initialization Error"></center>
+<br>
+it means that database file is locked by another process and <i><b>Contractors</b></i>
+application cannot gain access to it. It may be caused by another instance of application
+that is already running or the fact that database file has set <i>read-only</i>
+attribute.
+
+<a name="could_not_start_network"></a><h4>Could not start application in <i>network</i> mode:</h4>
+
+If you see such error dialog:
+<br><br>
+<center><img src="img/errors/network_init.png" alt="Network Mode Initialization Error"></center>
+<br>
+it means that RMI registry cannot be found at given address and port. This may
+be caused by wrong configuration or the fact that RMI registry is not running.
+
+<a name="could_not_start_rmi"></a><h4>Could not start RMI service:</h4>
+
+If you see such error dialog:
+<br><br>
+<center><img src="img/errors/service_start.png" alt="Service Starting Error"></center>
+<br>
+it means that database file is locked by another process and <i><b>Contractors</b></i>
+application cannot gain access to it. It may be caused by another instance of application
+that is already running or the fact that database file has set <i>read-only</i>
+attribute.
+
+<a name="could_not_store_conf"></a><h4>Could not store application's configuration:</h4>
+
+If you see such error dialog:
+<br><br>
+<center><img src="img/errors/configuration_store.png" alt="Configuration Storage Error"></center>
+<br>
+it means that <i><b>Contractors</b></i> application could not store configuration.
+This may be caused because configuration file <code>suncertify.properties</code>
+has set <i>read-only</i> attribute.
+
+<br><br>
+<a href="#top"><i>Return to top</i></a>
+</body>
+</html>

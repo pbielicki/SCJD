@@ -1,0 +1,363 @@
+1. Interface suncertify.db.DBMain is wrongly designed.
+
+	Issues: The main problem is that exception hierarchy is not judiciously 
+	created e.g. method update(int, String[]) does not throw DuplicateException 
+	and it is a mistake. It is obvious that end user can update existing record 
+	with data that already are stored in the database. More so each method that 
+	operates on database (except for method read(int) - it only reads data) should
+	throw some generic database exception e.g. DBException that would indicate 
+	that database cannot be accessed (this exception has nothing in common with for
+	example RecordNotFoundException).
+	
+	This interface lacks in having method that retrieves all records from database.
+	
+	Decisions: My solution is inelegant but I didn't know if I can change
+	obtained interface. To be sure that I meet all "must" requirements I didn't
+	change it but applied bypass solution. All additional exceptions added by me
+	inside suncertify.db.Data implementation are wrapped by relevant exceptions
+	that are legal in specific context e.g. DuplicateKeyException is wrapped by
+	RecordNotFoundException. This solution is very inelegant because all methods
+	in Data Access Objects have to extract real cause from the exception that 
+	was thrown.
+	
+	Second issue was solved in more elegant way but it was also a big concern for
+	me if I can change obtained suncertify.db.DBMain interface or not. Like in
+	previous issue I decided not to add any method to this interface but create
+	a new (additional) one: suncertify.db.DBPersistent. The name of this interface
+	is in my view counterintuitive but I was unable to find better one. This
+	interface is intended to define additional methods for suncertify.db.DBMain
+	interface - specifically this interface is aware of higher level persistent 
+	model (I mean it knows about suncertify.db.domain.Persistent class). I added
+	only one method that returns all valid records (concrete implementations of
+	suncertify.db.domain.Persistent class) from database.
+	
+2. Legacy data format was delivered and must be supported.
+
+	Issues: Legacy data format limits ability to model data in a strict object
+	oriented way. It is impossible to create reasonable relations between
+	different objects stored in database e.g. between contractor and owner.
+	
+	No numeric id is stored as a part of record data - it is significantly more
+	difficult to operate on such data because id of each record must be passed 
+	somehow from one layer (in the meaning of MVC design pattern) to the another
+	without changing value.
+	
+	Decisions: The best solution for database would be relational database with
+	any object-relational mapping technology (JDO, Hibernate, etc.). It would
+	significantly ease not only development but mainly maintenance of such system.
+	There will be no need for database administrator to learn this proprietary
+	database schema and administration and thus will increase ones efficiency and
+	productivity.
+	
+	No id stored in database is a quite serious issue because each record should
+	be identified not only by its unique data (such as name and location) but 
+	also by some number (in this case it can be record number and it would be
+	the best solution). This is my solution, then - number of the record is its
+	id (physical not logical - logical id is compound of name and location). If
+	record's id equals suncertify.db.domain.DBMetaInfo.UNSAVED_RECORD_NO (it is
+	set to 0) it means that current record has not been saved yet - otherwise
+	id indicates record's position in database file.
+	
+3. Which I/O class use to read database file.
+
+	Issues: There are many I/O classes that can be used in order to manipulate
+	database file. Each class has its own pros and cons and this is quite a big
+	deal which to use.
+	
+	Decisions: I decided to use java.io.RandomAccessFile class. The other
+	stream/reader/writer classes were developed for general I/O, whereas
+	RandomAccessFile class takes advantage of a particular behavior of files
+	that is not found in general I/O devices. The most desired feature for my
+	solution was ability to seek to a desired position within a file and then
+	read or write desired amount of data - with random-access file it is very
+	simple because this class provides such functionality.
+
+4. Model data as JavaBean instead of operating on String arrays.
+
+	Issues: It is very inconvenient to develop application and operate on String
+	arrays (that are meaningless) instead of using specialized JavaBean classes
+	in which each attribute can be responsible for carrying specialized information
+	e.g. date, amount of money, etc. All data stored directly to database file
+	are just strings so application developer doesn't know what each field in this
+	array means. More so sequence of fields can change from time to time, so the
+	amount of changes in developed application can be enormous.
+	
+	Decisions: Natural for me was to abstract low-level data representation from
+	logical model. In order to achieve this I created relevant domain model. Main 
+	class that represents data in database is suncertify.db.domain.Contractor. It
+	consists of all data that can be stored and retrieved to and from database.
+	What is very important this class is very convenient for developers because
+	allows to exchange data between String array and object representation in a 
+	very easy way (it has a constructor that takes String[] parameter and 
+	String[] toStrings() method). This class also takes responsibility for ensuring 
+	that all fields have relevant lengths.
+	I also created additional class: suncertify.db.domain.Money that eases operations
+	on fields that represents monetary values. Generally this class should represent
+	different entity in relational database.
+	
+5. Model database operations as Data Access Object.
+
+	Issues: The best way to develop applications that access database and provide
+	GUI for operating on it is to split it into relevant layers. Developer should
+	not operate directly on database as well as on low-level data representation
+	(I mean String arrays). We need additional layer that will stand for some
+	kind of framework that eases application development by simplifying access to
+	database.
+	
+	Decisions: Natural decision for me was to create Data Access Object (DAO) 
+	layer: suncertify.db.dao.IDao and suncertify.db.dao.IContractorDao (as a
+	specialized interface) interfaces. This DAO layer greatly simplifies application
+	development firstly because DAO pattern is widely known and used and secondly
+	because it is very convenient to use high-level methods that operate on
+	specialized persistent classes (suncertify.db.domain.Contractor) instead of 
+	operating on String arrays.
+
+6. Object streams and serialization or RMI?
+
+	Issues: One of the main problems I encountered during developing this system
+	was hesitation between using own proprietary networking solution based on
+	raw sockets or choose mature enough RMI technology.
+	
+	Decisions: Objects streams are an appropriate design choice for simple
+	client/server systems. As complexity increases (this system is intended to
+	be constantly upgrading), RMI becomes more appropriate. This is because object
+	streams require custom protocol thus a command object that tells the server
+	what service is required needs to be invented. With RMI adding new services
+	is almost straightforward - adding new methods to the interface and implementing
+	them that's all what we are obliged to do. With objects streams we would need
+	to add new command and handle it in appropriate way. More so RMI can be easily
+	integrated with J2EE technology and J2EE is the approach this system will
+	probably follow soon: "this interim step will give them a starting point for 
+	migrating the system to the web" (I assume that when IT director decided to 
+	choose Java	then as a web-based technology J2EE-like solution will be subsequently 
+	chosen).
+	
+	There is also one reason for choosing RMI - it is very easy to do this. No
+	custom server and client code has to be implemented - it is strict object-
+	oriented solution while client/server solution with commands is rather structural-
+	oriented solution which is hard to maintain and extend.
+
+7. Locking model
+
+	Issues: Locking model was one of the most difficult and challenging problem
+	I encountered during development of this system. All operations that change
+	database state (add, update or remove record) have to be synchronized somehow.
+	Synchronized is a kind of buzzword that can mean nothing if misused. I'll try
+	not to misuse this important term. For me "synchronized" word means that only
+	one user can perform specific operation at one moment. It means that when two
+	users want to perform write operation on the same record (let's say one of them
+	wants to update its data and another one wants to delete this record) at the
+	same moment one of them will have to wait until the previous operation is over.
+	But it also means that if two different users want to perform write operation
+	on different records those operations can be processed simultaneously.
+	Implementation of this problem is not trivial even in Java language that provides
+	mechanism for such issues.	
+	
+	Decisions: I tried to comply with rules described in famous book "Effective 
+	Java: Programming Language Guide" written by Joshua Bloch. I decided not to 
+	block the whole Data object while committing any database operation but use 
+	synchronized collections and block them when needed. However I realized that
+	I will sometimes need to block the whole Data object - I distinguished two 
+	types of database operations:
+		1. Operations that have impact only one record in database:
+			- read
+			- update
+			- delete
+			
+		2. Operations that have impact on the whole database:
+			- create
+			
+	In the first case we can lock single record and operate on its data. In the
+	second scenario we have to lock the whole database because we affect the whole
+	database (size, probably reusing deleted record, etc.).
+	
+8. Implemented searching facility (Data class and DAO class).
+
+	Issues: I cannot use relational database and SQL language to implement searching
+	facility which is very severe limitation. This is very cumbersome and hard
+	to create own query language. More so all data in database file are stored as
+	strings so we have another problem: how to search for values other than string
+	e.g. numeric values and how to search for specific ranges of values (which
+	is very useful from he user's point of view).
+	
+	Decisions: I decided that low-level searching facility will be unaware of having
+	other types of data than String, so it will only search for matching strings.
+	This is implemented in int[] find(String[]) method in suncertify.db.Data class.
+	Higher-level DAO class is responsible for searching contractors upon any valid
+	filter including numeric values ranges (not exactly ranges but simple comparison
+	operations like greater, less, equal, etc.). This is implemented in the following
+	method: List<T> load(String[]) in the suncertify.db.dao.impl.ContractorLocalDao
+	class.
+	
+9. Ability to extend application modes to the new values in the future.
+
+	Issues: I predicted that three modes that are to be implemented at this moment
+	(standalone, server and network) can and probably would be soon changed. This
+	is the part of the system that is changing from time to time and this issue
+	needs to be addressed when perceived. Good object-oriented practices focus
+	on distinguishing what is constant and what is changing in developed systems
+	and I think that application modes is the part that is definitely not constant.
+		
+	There are some issues around application modes like menu and window captions
+	that are strongly tied to the mode (i.e. window title depends on the mode and
+	will be different for standalone and for network mode). Different window should
+	also be showed in different application mode.
+	
+	Decisions: I addressed all issues mentioned above with one solution. I utilized
+	Command and Strategy design patterns to do this. Configuration for this solution
+	is stored in command.properties file. First section defines all available modes
+	- this is a key - and commands executed when user runs application with given
+	mode. All commands simply do some configuration/startup jobs and show main 
+	application window; they also catch the highest level of exceptions that may
+	be thrown by GUI. Next section in this file defines string names for each mode
+	that can be used to construct main window title or as a main window title, or
+	as a caption for menu item (actually it used as it in Configuration menu).
+	Third section defines name providers for main window title (here Strategy
+	design pattern is applied). These providers create main window title - for
+	each mode different information should be included in this title. The last section
+	defines class for dialog window for each mode - I assumed that there should
+	be configuration dialog window for each mode. If there is no need for mode to
+	define dialog this can be omitted - application will simply show a message
+	informing that there is no configuration dialog for selected mode.
+	
+	This solution is very simple and what is even more important is the fact that 
+	this is extremely easy to add new application mode without changing existing 
+	code. Developer only has to do two following things: add appropriate entries 
+	into command.properties file and implement necessary classes (command, provider,
+	configuration dialog - this is optional - and of course add relevant logic
+	into application).
+
+10. Contractors list in the main window needs sorting facility to make GUI user-friendly.
+
+	Issues: Natural thing while navigating through application with lists and
+	tables is ability to sort displayed data. Without such feature searching and
+	simply viewing such widgets is cumbersome and even annoying. Those aspects
+	influence the general impression of application and makes it more or less
+	user-friendly. Of course from the user's point of view we (developers) should
+	make our applications in the way they are very easy to use and intuitive.
+	
+	Decisions: I decided to implement sorting facility to the contractors list that
+	is the main and paramount widget of this application. Natural for me as a user
+	is that when I press table column the data in this table will sort upon this
+	column and when I press it again it will sort in the opposite direction.
+	Unfortunately Swing does not support such features and even does not provide
+	any framework (I mean interfaces) for sorting data. I found many different
+	solutions on the web and I compiled the into my proprietary solution. So when
+	user presses table column for the first time data in the table will sort upon
+	this column ascendingly; when user presses the same table column again it will
+	sort descendingly and so on. The whole logic concerning sorting facility and
+	other table features is implemented in suncertify.gui.contractor.ContractorTableModel
+	class.
+	
+11. Exception hierarchy for Data Access Object layer.
+
+	Issues: It is very important for data access layer (in this case Data Access
+	Objects) to pass verbose and unambiguous error information to the higher
+	application layers (e.g. GUI). Low-level errors like I/O exceptions are useless
+	for the end user as one doesn't understand such information. More so errors
+	should be as abstract as the layer on which they appear. This is an important
+	issue to create reasonable, comprehensive and intelligible exception hierarchy.
+	Always with exception hierarchy one important question comes to my mind: use
+	checked or unchecked exceptions?
+	
+	Decisions: The main problem I had to solve was to identify errors that can
+	occur during any database operation. I somewhat used ideas I learnt when using
+	Hibernate 2.x and created main (super) exception that means any problem. This
+	class is: suncertify.db.dao.DaoException and this exception is checked one.
+	I decided to create checked exceptions hierarchy because database exceptions
+	are too important to let the developer omit them without worrying.	This super
+	exception is not very useful because it tells almost nothing about the error
+	(except for that it was caused by database operation). So I created specialized
+	exceptions:
+		- suncertify.db.dao.DaoDuplicateException - this exception is thrown when
+		  user wants to store in the database data that already exists in it (e.g.
+		  contractor with the same name and location);
+		   
+		- suncertify.db.dao.DaoFinderException - this exception is thrown when
+		  find/load operations return zero-length value - it means that requested
+		  records could not be found in the database;
+		  
+		- suncertify.db.dao.DaoInitializationException - general exception that
+		  is thrown when initialization of DAO object fails (it can be any reason
+		  including inability to connect to the RMI registry server);
+		  
+		- suncertify.db.dao.DaoStaleObjectException - this exception is thrown
+		  when user wants to commit db operation on record's data that are stale.
+		  Stale record is for example record that was deleted by another user, so
+		  DAO object cannot for example modify such record's data.
+		  
+	Exception hierarchy created by me is very handy in use and can handle vast
+	majority of errors database can raise during data processing.
+	
+12. Abstract common behavior in abstract GUI classes.
+
+	Issues: Swing framework is not perfect - I would even say that is a far cry
+	from ideal. Widgets does not provide basic functionality that is very useful
+	and common in graphical environments e.g. centering window position upon parent
+	component (or if there is no parent component upon display screen).
+	
+	GUI widgets have very common behavior and let's say top-level functionality
+	like checking data validity in dialog windows, exiting and initializing
+	windows. It is obvious that every window will have such methods and the only
+	way to impose implementing them on developers is to create appropriate framework.
+	
+	Decisions: I decided to create two main abstract classes that define common
+	behavior for windows: suncertify.gui.AbstractWindow and for dialog windows:
+	suncertify.gui.dialog.AbstractDialog. These classes define useful methods that
+	have to be implemented by the concrete window/dialog. Some of the methods are
+	already implemented and they define default behavior. Default implementation
+	is also very comfortable for developers if they don't want to specify different
+	actions for common events.
+
+13. Specialties and currency symbols should be stored in database in dictionary
+	tables.
+
+	Issues: In this application we have two types of data that can be distinguished
+	as a dictionaries: contractor's specialties and currency symbols. I see those
+	two types of data as a dictionary because there is limited number of specialties
+	and limited number of currency symbols. More so those data are common for all
+	contractors and currency values, thus they should be stored in database in
+	some dictionary tables. Unfortunately legacy data format does not allow us to
+	store additional data to database file. But those data should be easily modifiable
+	and extendable.
+	
+	Decisions: I decided not to "hardcode" such information and enable user/developer
+	to change such data easily. The best approach would be to store such dictionary
+	data in database but it is not applicable in this case because I could not
+	change existing file format (and again SQL database would solve this issue).
+	Having such limitation I decided to store dictionary data in properties file
+	named: dictionary.properties - this file is a part of JAR file containing the
+	whole application, thus cannot be changed dynamically but can be easily changed
+	by the application's administrator.
+	
+14. Design dialog window for adding/editing contractor's data.
+
+	Issues: One of the most important element (for user the most visible) I had
+	to design and implement was dialog window to add/edit/search contractors'
+	data. This dialog window would probably be the most often used widget by the
+	user in the whole system, thus it should be as intuitive as possible. Adding
+	and editing contractors' data should be very easy and should be also available
+	without using mouse.
+	
+	Next issue connected with the same dialog window is question how user should
+	enter specific data types like numbers, currency symbols, specialties. There
+	should be very easy and intuitive way to do this.
+	
+	Decisions: I decided that all widgets that allow user to enter any data are
+	accessible through keyboard (Tab or R-Shift + Tab keys) and the sequence of
+	moving cursor from one widget to another is natural (from left to right and
+	from top to bottom).
+	
+	Numbers such as size of contractor's company can be changed via spinner widgets
+	that enable increase or decrease number by one (or other defined amount) which
+	is very convenient.
+	
+	Currency symbol is selected from combo box - currency symbols are read from
+	dictionary.properties configuration file.
+	
+	Specialties text field is read-only and can be changed only through specialized
+	dialog window in which user can choose specialty from the list as well as add
+	new one by her/himself. Amount of specialties is limited by length of this field
+	in database, so when user wants to add too many specialties dialog window 
+	that controls these data will limit amount of specialties to the maximum permitted
+	limit.	Each single specialty can be added to specialties list only once.
