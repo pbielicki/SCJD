@@ -1,7 +1,5 @@
 <project name="SCJD" default="dist" basedir=".">
-	<description>
-        SCJD build file
-    </description>
+	<description>SCJD build file</description>
 
 	<!-- Set global properties for this build -->
 	<property name="src" location="../src" />
