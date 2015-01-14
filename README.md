@@ -2,12 +2,10 @@
 
 <body>
 
-# 
-<a NAME="top"></a>Sun Certified Developer for the Java 2 Platform: Application
+# <a NAME="top"></a>Sun Certified Developer for the Java 2 Platform: Application
 Submission (Version 2.3.1)
 
-## 
-Introduction and Index
+## Introduction and Index
 
 This document tells you what you need, and what you must do, to submit
 your solution to the Sun Certified Developer for the Java 2 Platform programming
@@ -38,8 +36,7 @@ deliver, and how you should package them.
 *   **[Marking](#marking)** - How your assignment will be graded
 *   **[What to do if you have a question](#whattodo)**
 
-### 
-Important Note About Automatic Failure
+### Important Note About Automatic Failure
 
 _Where this document uses the word "must" an absolute requirement is
 being described. If you fail to adhere to such a requirement, your assignment
@@ -51,8 +48,7 @@ slight deviation could result in automatic failure.&nbsp;_
 
 * * *
 
-## 
-<a NAME="what_this"></a>Application Overview
+## <a NAME="what_this"></a>Application Overview
 
 ### Background
 
@@ -82,8 +78,7 @@ allow the CSRs to generate a list of constractors that match a
 customer's criteria. This is the project that you have been
 commissioned to implement.
 
-### 
-What you must do
+### What you must do
 
 The following are the "top level" features that must be implemented:
 
@@ -94,8 +89,7 @@ mechanism
 The work involves a number of design choices that have to be made. In all
 such cases, the following principles should be applied.
 
-#### 
-Clarity and Maintainability
+#### Clarity and Maintainability
 
 <dl>
 <dd>
@@ -107,8 +101,7 @@ and the number of classes and interfaces, should be reasonable.</dd>
 </dd>
 </dl>
 
-#### 
-Documentation
+#### Documentation
 
 <dl>
 <dd>
@@ -131,16 +124,14 @@ the application. This documentation must be in one of these three formats:</dd>
 *   Plain text (not a wordprocessor format)
 *   Within the application as a help system.
 
-#### 
-Correctness
+#### Correctness
 
 <dt>
 Your project must conform to this specification.&nbsp; Features that deviate
 from specification will not receive full credit.&nbsp; You will not receive
 extra credit points for work beyond the requirements of the specification.</dt>
 
-#### 
-Use of Standard Elements
+#### Use of Standard Elements
 
 <dl>Use of functionality provided by the core Java classes will be preferred
 to your own implementation of that functionality, unless there is a specific
@@ -149,18 +140,15 @@ _[Return to top](#top)_
 
 * * *
 
-## 
-<a NAME="arch"></a>Overall Architecture
+## <a NAME="arch"></a>Overall Architecture
 
-### 
-Major Components
+### Major Components
 
 The main architecture of the application must be a traditional client-server
 system. There are three key parts:&nbsp; the server-side data management
 system, the client-side GUI, and the network connection between the two.
 
-### 
-Non-Networked Mode
+### Non-Networked Mode
 
 The program must be able to work in a non-networked mode. In this mode,
 the database and GUI must run in the same VM and must perform no networking,
@@ -171,16 +159,14 @@ that is permitted. Architecturally, this mode must use the database and
 GUI from the networked form, but must not use the network server code at
 all.
 
-### 
-Network Communication Approach
+### Network Communication Approach
 
 You have a choice regarding the network connection protocol. You must use
 either serialized objects over a simple socket connection, or RMI.&nbsp;
 Both options are equally acceptable.&nbsp; Keep in mind that networking
 must be entirely bypassed in the non-networked mode.
 
-### 
-Restrictions on RMI
+### Restrictions on RMI
 
 To avoid unnecessary complexity in the marking environment certain restrictions
 are placed on solutions that use RMI.&nbsp; Specifically:
@@ -199,8 +185,7 @@ downloading occurs.</li>
 
 * * *
 
-## 
-<a NAME="UI"></a>The User Interface
+## <a NAME="UI"></a>The User Interface
 
 The user interface for this assignment must satisfy the following criteria:
 
@@ -219,8 +204,7 @@ with minimal disruption to the users when this occurs.
 
 * * *
 
-## 
-<a NAME="database"></a>Server
+## <a NAME="database"></a>Server
 
 ### Required Interface
 
@@ -268,8 +252,7 @@ constructor that takes a String that serves as the exception's description.
 <p>Any methods that throw RecordNotFoundException should do so if a specified
 record does not exist or is marked as deleted in the database file.
 
-### 
-<font size=+0>Network Approaches</font>
+### Network Approaches
 
 Your choice of RMI or serialized objects will not affect your grade, but
 no other approach is acceptable. In either case, the program must allow
@@ -277,8 +260,7 @@ the user to specify the location of the database, and it must also accept
 an indication that a local database is to be used, in which case, the networking
 must be bypassed entirely. No authentication is required for database access.
 
-### 
-Locking
+### Locking
 
 Your server must be capable of handling multiple concurrent requests, and
 as part of this capability, must provide locking functionality as specified
@@ -292,7 +274,7 @@ the desired resource becomes available.
 
 * * *
 
-##  <a NAME="data"></a> Data file Format
+##  <a NAME="data"></a>Data file Format
 
 The format of data in the database file is as follows:
 <p>Start of file
@@ -384,11 +366,9 @@ record is available for sale.</td>
 
 * * *
 
-## 
-<a NAME="Deliverables"></a>Deliverables
+## <a NAME="Deliverables"></a>Deliverables
 
-### 
-Target Platform and Execution
+### Target Platform and Execution
 
 Throughout this exercise, you must use exclusively the Java 2 platform.
 You may develop your code using any implementation of the Java 2 platform,
@@ -402,6 +382,7 @@ on any libraries other than those of the Java 2 Platform.
 <p>When you submit your assignment, each part (client and server) must
 be executable using a command of this exact form:
 > <tt>java -jar &lt;path_and_filename> [&lt;mode>]</tt>
+
 Your programs must not require use of command line arguments other than
 the single mode flag, which must be supported.&nbsp; Your programs must
 not require use of command line property specifications. All configuration
@@ -413,8 +394,7 @@ must run, "alone", indicating standalone mode, or left out entirely, in
 which case the network client and gui must run.
 <p>You must not require manual editing of any files by the examiners.
 
-### 
-Packaging of Submissions
+### Packaging of Submissions
 
 All elements of your submission must be packaged in a single JAR file.
 The JAR file must have the following layout and contents in its root:
@@ -438,8 +418,7 @@ top level:
 
 <center>
 
-## 
-<a NAME="marking"></a>Marking
+## <a NAME="marking"></a>Marking
 </center>
 This section describes how your submission will be marked, and the marking
 criteria which govern allocation of marks for the Sun Certified Developer
@@ -467,8 +446,7 @@ but clearly_ in your comments.
 examination. This exam tests your understanding of your submission and
 asks you to justify a number of design choices embodied in that submission.
 
-### 
-Automatic Failures
+### Automatic Failures
 
 _As noted at the beginning of this document, where this document uses
 the word "must" an absolute requirement is being described. If you fail
@@ -476,8 +454,7 @@ to adhere to such a requirement, your assignment will be failed automatically,
 and without further evaluation. It is therefore imperative that you pay
 close attention to any statement using the word "must" in this document._
 
-### 
-**Marking Criteria**
+### **Marking Criteria**
 
 Your work will be evaluated based on the following criteria. The minimum
 passing score is 320 out of a possible 400 points.
@@ -504,8 +481,7 @@ Server (40 points)
 
 <center>
 
-## 
-<a NAME="whattodo"></a>What to do if you have a question
+## <a NAME="whattodo"></a>What to do if you have a question
 </center>
 You might find that you want to ask for further explanation of some part
 of this document, perhaps to seek permission to solve a problem in a particular
